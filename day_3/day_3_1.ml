@@ -1,5 +1,3 @@
-##load "str.cma";;
-
 let read_file filename = 
   let ic = open_in filename in 
   let rec read_lines accumulator =
@@ -29,18 +27,55 @@ let rec do_all func lst =
   | head::tail -> func head; do_all func tail
 ;;
 
-(* let rec get_mul_from_start string = 
-  let rec find_end = 
-     *)
-  
+
+
+let get_mul_from_start string = 
+  let regex = Str.regexp "mul([0-9]+,[0-9]+)" in
+  let rec find_end index =
+    if index > String.length string || index > 12 then -1 
+    else if Str.string_match regex (String.sub string 0 index) 0 then index
+    else find_end (index + 1)
+  in
+  let index = find_end 0 in
+  if index == -1 then ""
+  else String.sub string 0 index
+;;
+
+let rec get_all_muls string acc = 
+  (* Printf.printf "%s\n" string; *)
+  let substring = "mul(" in
+  let substring_length = String.length substring in
+  match string with
+  | "" -> acc
+  | _ -> 
+    let index = substring_index string substring in
+    if index == -1 then acc
+    else 
+      let trimmed_string = String.sub string index (String.length string - index) in
+      let mul_occurence = get_mul_from_start trimmed_string in
+      if String.length mul_occurence == 0 then 
+        let new_string = String.sub trimmed_string substring_length (String.length trimmed_string - substring_length) in
+        get_all_muls new_string acc
+      else 
+        let mul_occurence_length = String.length mul_occurence in
+        let final_trimmed_string = String.sub trimmed_string mul_occurence_length (String.length trimmed_string - mul_occurence_length) in
+        get_all_muls final_trimmed_string (mul_occurence :: acc)
+    ;;
+    
+let multiply string = 
+  let trimmed_front = String.sub string 4 (String.length string - 4) in
+  let trimmed = String.sub trimmed_front 0 (String.length trimmed_front - 1) in
+  let string_nums = Str.split(Str.regexp ",") trimmed in
+  let operand1 = int_of_string(List.nth string_nums 0)  in
+  let operand2 = int_of_string(List.nth string_nums 1)  in
+  operand1 * operand2;;
+
 
 
 let () =
-  (* let lines = read_file "day_3/day_3.in" in 
-  let substring = "mul(" in
-  let index = substring_index (List.nth lines 0) substring in
-  
-   *)
-   let regex = Str.regexp "mul([0-9]{1,3},[0-9]{1,3})" in
-   let matched = Str.string_match regex "mul(10,32)" 0 in
-   Printf.printf "%b" matched
+  let lines = read_file "day_3/day_3.in" in 
+  let get_line_total line = List.fold_left (fun acc str -> acc + multiply str) 0 (get_all_muls line []) in
+  let total = List.fold_left (fun acc line -> acc + get_line_total line) 0 lines in
+  Printf.printf "%d \n" total
+
+   
