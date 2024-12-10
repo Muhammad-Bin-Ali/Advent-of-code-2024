@@ -71,7 +71,6 @@ while i < len(matrix):
 
         if top_right(i - 1, j + 1):
             if j + 2 < len(matrix[i]) and matrix[i][j + 2] == "M" and top_left(i - 1, j + 1):
-                print("HERE", i, j)
                 count += 1
 
             if i - 2 >= 0 and matrix[i - 2][j] == "M" and bottom_right(i - 1, j + 1):
@@ -79,7 +78,6 @@ while i < len(matrix):
 
         if bottom_right(i + 1, j + 1):
             if j + 2 < len(matrix[i]) and matrix[i][j + 2] == "M" and bottom_left(i + 1, j + 1):
-                print("HERE", i, j)
                 count += 1
 
         if top_left(i - 1, j - 1):

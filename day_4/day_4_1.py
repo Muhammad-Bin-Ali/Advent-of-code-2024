@@ -43,7 +43,6 @@ with open("day_4/day_4.in") as f:
 
 count = 0
 
-
 for i in range(len(matrix)):
     for j in range(len(matrix[i])):
         if matrix[i][j] != "X":
